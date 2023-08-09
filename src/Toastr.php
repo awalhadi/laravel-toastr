@@ -4,79 +4,76 @@ declare(strict_types=1);
 
 namespace AwalHadi\LaravelToastr;
 
-use Illuminate\Support\Facades\Session;
+use Illuminate\Session\SessionManager as Session;
+use Illuminate\Config\Repository as Config;
+use Illuminate\Support\MessageBag;
+use Exception;
+
+// use Illuminate\Support\Facades\Session;
 
 class Toastr
 {
-    /**
-     * Add a notification.
-     *
-     * @param string $type The type of the notification.
-     * @param string $message The message of the notification.
-     * @param string $title The title of the notification.
-     * @return void
-     */
-    protected function addNotification(string $type, string $message, string $title = ''): void
+    protected $sessionHandler;
+    protected $configHandler;
+    protected $notificationList = [];
+
+    public function __construct(Session $sessionHandler, Config $configHandler)
     {
-        // Get the existing notifications from the session.
-        $notifications = Session::get('toastr::notifications', []);
-
-        // Add the new notification to the array.
-        $notifications[] = [
-            'type' => $type,
-            'title' => $title,
-            'message' => $message,
-        ];
-
-        // Store the updated array in the session.
-        Session::put('toastr::notifications', $notifications);
+        $this->sessionHandler = $sessionHandler;
+        $this->configHandler  = $configHandler;
     }
 
-    /**
-     * Add a 'success' notification.
-     *
-     * @param string $message The message of the notification.
-     * @param string $title The title of the notification.
-     * @return void
-     */
-    public function success(string $message, string $title = ''): void
+    public function generateNotificationScript(): string
     {
-        $this->addNotification('success', $message, $title);
+        $notifications = $this->sessionHandler->get('toastr::notifications', []);
+        $scriptContent = '<script type="text/javascript">';
+
+        foreach ($notifications as $notification) {
+            $configOptions = array_merge($this->configHandler->get('toastr.options', []), $notification['options'] ?? []);
+            $scriptContent .= 'toastr.options = ' . json_encode($configOptions) . ';';
+            $scriptContent .= 'toastr.' . $notification['type'] . '(\'' . addslashes($notification['message']) . '\', \'' . addslashes($notification['title'] ?? '') . '\');';
+        }
+
+        $scriptContent .= '</script>';
+        return $scriptContent;
     }
 
-    /**
-     * Add an 'info' notification.
-     *
-     * @param string $message The message of the notification.
-     * @param string $title The title of the notification.
-     * @return void
-     */
-    public function info(string $message, string $title = ''): void
+    protected function createNotification(string $type, $messageContent, ?string $titleText = null, array $customOptions = []): void
     {
-        $this->addNotification('info', $message, $title);
+        if (!in_array($type, ['error', 'info', 'success', 'warning'])) {
+            throw new Exception("The $type notification type is not valid.");
+        }
+
+        if ($messageContent instanceof MessageBag) {
+            $messageContent = implode("<br>", array_flatten($messageContent->getMessages()));
+        }
+
+        $this->notificationList[] = compact('type', 'messageContent', 'titleText', 'customOptions');
+        $this->sessionHandler->flash('toastr::notifications', $this->notificationList);
     }
 
-    /**
-     * Add a 'warning' notification.
-     *
-     * @param string $message The message of the notification.
-     * @param string $title The title of the notification.
-     * @return void
-     */
-    public function warning(string $message, string $title = ''): void
+    public function showInfo($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('warning', $message, $title);
+        $this->createNotification('info', $message, $title, $options);
     }
 
-    /**
-     * Add an 'error' notification.
-     *
-     * @param string $message The message of the notification.
-     * @param string $title The title of the notification.
-     * @return void
-     */
-    public function error(string $message, string $title = ''): void
+    public function showSuccess($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('error', $message, $title);
+        $this->createNotification('success', $message, $title, $options);
+    }
+
+    public function showWarning($message, ?string $title = null, array $options = []): void
+    {
+        $this->createNotification('warning', $message, $title, $options);
+    }
+
+    public function showError($message, ?string $title = null, array $options = []): void
+    {
+        $this->createNotification('error', $message, $title, $options);
+    }
+
+    public function removeAllNotifications(): void
+    {
+        $this->notificationList = [];
     }
 }
