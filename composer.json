@@ -1,0 +1,17 @@
+{
+    "name": "awalhadi/laravel-toastr",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AwalHadi\\LaravelToastr\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "A Awal Hadi",
+            "email": "awalhadi5@gmail.com"
+        }
+    ],
+    "require": {}
+}
