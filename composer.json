@@ -1,17 +1,31 @@
 {
-    "name": "awalhadi/laravel-toastr",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "AwalHadi\\LaravelToastr\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "A Awal Hadi",
-            "email": "awalhadi5@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "awalhadi/laravel-toastr",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "flash",
+    "laravel-flash",
+    "toastr",
+    "laravel-toastr",
+    "notification",
+    "laravel-notification"
+  ],
+  "autoload": {
+    "psr-4": {
+      "AwalHadi\\LaravelToastr\\": "src/"
+    }
+  },
+  "homepage": "https://github.com/awalhadi/laravel-toastr",
+  "authors": [
+    {
+      "name": "A Awal Hadi",
+      "email": "awalhadi5@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "illuminate/session": "^8.0|^9.0|^10.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
