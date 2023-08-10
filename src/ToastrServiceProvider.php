@@ -13,7 +13,7 @@ class ToastrServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton('toastr', function ($app) {
-            return new Toastr($app['session'], $app['config']);
+            return new \AwalHadi\LaravelToastr\Toastr($app['session'], $app['config']);
         });
     }
 
