@@ -13,23 +13,23 @@ use Exception;
 
 class Toastr
 {
-    protected $sessionHandler;
-    protected $configHandler;
-    protected $notificationList = [];
+    protected $session;
+    protected $config;
+    protected $notifications = [];
 
-    public function __construct(Session $sessionHandler, Config $configHandler)
+    public function __construct(Session $session, Config $config)
     {
-        $this->sessionHandler = $sessionHandler;
-        $this->configHandler  = $configHandler;
+        $this->session = $session;
+        $this->config  = $config;
     }
 
     public function generateNotificationScript(): string
     {
-        $notifications = $this->sessionHandler->get('toastr::notifications', []);
+        $notifications = $this->session->get('toastr::notifications', []);
         $scriptContent = '<script type="text/javascript">';
 
         foreach ($notifications as $notification) {
-            $configOptions = array_merge($this->configHandler->get('toastr.options', []), $notification['options'] ?? []);
+            $configOptions = array_merge($this->config->get('toastr.options', []), $notification['options'] ?? []);
             $scriptContent .= 'toastr.options = ' . json_encode($configOptions) . ';';
             $scriptContent .= 'toastr.' . $notification['type'] . '(\'' . addslashes($notification['message']) . '\', \'' . addslashes($notification['title'] ?? '') . '\');';
         }
@@ -38,38 +38,39 @@ class Toastr
         return $scriptContent;
     }
 
-    protected function createNotification(string $type, $messageContent, ?string $titleText = null, array $customOptions = []): void
+    protected function addNotification(string $type, $message, ?string $title = null, array $options = []): void
     {
         if (!in_array($type, ['error', 'info', 'success', 'warning'])) {
             throw new Exception("The $type notification type is not valid.");
         }
 
-        if ($messageContent instanceof MessageBag) {
-            $messageContent = implode("<br>", array_flatten($messageContent->getMessages()));
+        if ($message instanceof MessageBag) {
+            $message = implode("<br>", array_merge(...$message->getMessages()));
         }
 
-        $this->notificationList[] = compact('type', 'messageContent', 'titleText', 'customOptions');
-        $this->sessionHandler->flash('toastr::notifications', $this->notificationList);
+        $this->notifications[] = compact('type', 'message', 'title', 'options');
+        $this->session->flash('toastr::notifications', $this->notifications);
     }
+
 
     public function showInfo($message, ?string $title = null, array $options = []): void
     {
-        $this->createNotification('info', $message, $title, $options);
+        $this->addNotification('info', $message, $title, $options);
     }
 
     public function showSuccess($message, ?string $title = null, array $options = []): void
     {
-        $this->createNotification('success', $message, $title, $options);
+        $this->addNotification('success', $message, $title, $options);
     }
 
     public function showWarning($message, ?string $title = null, array $options = []): void
     {
-        $this->createNotification('warning', $message, $title, $options);
+        $this->addNotification('warning', $message, $title, $options);
     }
 
     public function showError($message, ?string $title = null, array $options = []): void
     {
-        $this->createNotification('error', $message, $title, $options);
+        $this->addNotification('error', $message, $title, $options);
     }
 
     public function removeAllNotifications(): void
