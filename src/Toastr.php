@@ -53,24 +53,24 @@ class Toastr
     }
 
 
-    public function showInfo($message, ?string $title = null, array $options = []): void
+    public static function showInfo($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('info', $message, $title, $options);
+        self::addNotification('info', $message, $title, $options);
     }
 
-    public function showSuccess($message, ?string $title = null, array $options = []): void
+    public static function showSuccess($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('success', $message, $title, $options);
+        self::addNotification('success', $message, $title, $options);
     }
 
-    public function showWarning($message, ?string $title = null, array $options = []): void
+    public static function showWarning($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('warning', $message, $title, $options);
+        self::addNotification('warning', $message, $title, $options);
     }
 
-    public function showError($message, ?string $title = null, array $options = []): void
+    public static function showError($message, ?string $title = null, array $options = []): void
     {
-        $this->addNotification('error', $message, $title, $options);
+        self::addNotification('error', $message, $title, $options);
     }
 
     public function removeAllNotifications(): void
