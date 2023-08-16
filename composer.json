@@ -27,6 +27,13 @@
     "php": "^8.0",
     "illuminate/session": "^8.0|^9.0|^10.0"
   },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AwalHadi\\LaravelToastr\\ToastrServiceProvider"
+      ]
+    }
+  },
   "minimum-stability": "dev",
   "prefer-stable": true
 }
