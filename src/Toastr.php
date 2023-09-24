@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace AwalHadi\LaravelToastr;
 
-use Illuminate\Session\SessionManager as Session;
-use Illuminate\Config\Repository as Config;
-use Illuminate\Support\MessageBag;
 use Exception;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\Facades\App;
+use Illuminate\Config\Repository as Config;
+use Illuminate\Session\SessionManager as Session;
 
 // use Illuminate\Support\Facades\Session;
 
@@ -17,10 +18,10 @@ class Toastr
     protected $config;
     protected $notifications = [];
 
-    public function __construct(Session $session, Config $config)
+    public function __construct()
     {
-        $this->session = $session;
-        $this->config  = $config;
+        $this->sessionHandler = $this->getSessionHandler();
+        $this->configHandler  = $this->getConfigHandler();
     }
 
     public function generateNotificationScript(): string
@@ -76,5 +77,15 @@ class Toastr
     public function removeAllNotifications(): void
     {
         $this->notificationList = [];
+    }
+
+    protected function getSessionHandler()
+    {
+        return $this->sessionHandler ?? App::make(Session::class);
+    }
+
+    protected function getConfigHandler()
+    {
+        return $this->configHandler ?? App::make(Config::class);
     }
 }
