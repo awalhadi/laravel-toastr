@@ -1,18 +1,16 @@
 @if(session()->has('toastr'))
 <!-- @if(!Session::has('toastr_loaded')) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://raw.githubusercontent.com/awalhadi/easy-toast-js/refs/heads/main/dist/easyToast.min.js"></script>
 <!-- @php(Session::put('toastr_loaded', true)) -->
 <!-- @endif -->
 
 <script>
-    toastr.options = {
-        !!json_encode(config('toastr.options')) !!
-    };
-    @foreach(session('toastr') as $notification)
-    toastr["{{ $notification['type'] }}"]("{{ $notification['message'] }}", "{{ $notification['title'] }}", {
-        !!json_encode($notification['options']) !!
-    });
+    const toast = new ToastManager({
+            !!json_encode(config('toastr.options')) !!
+        }),
+
+        @foreach(session('toastr') as $notification)
+    toast.show("{{ $notification['message'] }}", "{{ $notification['type'] }}");
     @endforeach
 </script>
 @endif
