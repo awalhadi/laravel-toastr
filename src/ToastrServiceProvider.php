@@ -37,6 +37,12 @@ class ToastrServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => resource_path('views/vendor/toastr'),
         ], 'views');
 
+        
+        $this->publishes([
+          __DIR__.'/../resources/js' => public_path('vendor/toastr/js'),
+          __DIR__.'/../resources/css' => public_path('vendor/toastr/css'),
+      ], 'assets');
+
         // Load helper functions
         require_once __DIR__ . '/toastr_helpers.php';
     }

@@ -1,14 +1,17 @@
 @if(session()->has('toastr'))
-    @if(!Session::has('toastr_loaded'))
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        @php(Session::put('toastr_loaded', true))
-    @endif
+        <link rel="stylesheet" href="{{ asset('vendor/toastr/css/toastr.css') }}">
+        <script src="{{ asset('vendor/toastr/js/toastr.js') }}"></script>
+
+    @php
+        $notification = session('toastr');
+    @endphp
 
     <script>
-        toastr.options = {!! json_encode(config('toastr.options')) !!};
-        @foreach(session('toastr') as $notification)
-            toastr["{{ $notification['type'] }}"]("{{ $notification['message'] }}", "{{ $notification['title'] }}", {!! json_encode($notification['options']) !!});
-        @endforeach
+        LaravelToastr.options = {!! json_encode($notification['options']) !!};
+        LaravelToastr["{{ $notification['type'] }}"](
+            "{{ $notification['message'] }}",
+            "{{ $notification['title'] }}",
+            LaravelToastr.options
+        );
     </script>
 @endif

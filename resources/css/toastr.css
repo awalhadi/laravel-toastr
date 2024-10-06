@@ -1,0 +1,29 @@
+/* resources/css/toastr.css */
+.laravel-toastr {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 300px;
+  padding: 15px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.laravel-toastr-success {
+  background-color: #28a745;
+}
+
+.laravel-toastr-info {
+  background-color: #17a2b8;
+}
+
+.laravel-toastr-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.laravel-toastr-error {
+  background-color: #dc3545;
+}
