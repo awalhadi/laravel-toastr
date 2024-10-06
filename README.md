@@ -7,7 +7,7 @@ Easy Toastr notifications for Laravel 8+
 You can install the package via composer:
 
 ```bash
-composer require your-vendor/laravel-toastr
+composer require awalhadi/laravel-toastr
 ```
 
 ## Usage
